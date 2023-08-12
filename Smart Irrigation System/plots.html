@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head con>
+    <meta charset="utf-8">
+    <meta http-equiv="refresh" content="5">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title style="padding:10px;background-color: black;color:beige;">Smart Irrigation System</title>
+    <style>
+        .tempchart {
+            width: 700px;
+            height: 700px;
+            padding-left: 100px;
+            padding-right: 100px;
+            padding-bottom: 60px;
+            float: left;
+        }
+
+        .humchart {
+            width: 700px;
+            height: 700px;
+            padding-left: 100px;
+            padding-right: 100px;
+            padding-bottom: 60px;
+            float: left;
+        }
+    </style>
+</head>
+<script src=" https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+</script>
+
+<body style="background-color:rgb(211, 229, 238)">
+    <h1 align="center" style="padding:10px;background-color: rgb(9, 93, 138);color:rgb(208, 208, 188);">Smart Irrigation System</h1>
+    <!-- <button class="btn btn-success" onclick="updateChart()">Update</button> -->
+    <br>
+    <div class="tempchart">
+        <canvas id="tempChart1"></canvas>
+    </div>
+    <div class="humchart">
+        <canvas id="humChart1"></canvas>
+    </div>
+    <script>
+        var masterData;
+        async function fetchChartData() {
+            await fetch("http://10.102.136.134:5000/chartdata")
+                .then(res => res.json())
+                .then(data => {
+                    masterData = data;
+                })
+                .then(() => {
+                    console.log(masterData)
+                })
+        }
+        function object_to_array(data) {
+            let res = []
+            let cnt = 0
+            for (let i in data) {
+                if (cnt > 10) {
+                    break;
+                }
+                else {
+                    res.push(data[i]);
+                    cnt += 1
+                }
+            }
+            return res;
+        }
+        async function main() {
+            let Values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            var tempValues = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1]
+            var humValues = [0, 0, 0, 0, 0, 0, 1, 1, 1, 1]
+
+            await fetchChartData();
+            tempValues = object_to_array(masterData['Temperature'])
+            humValues = object_to_array(masterData['Humidity'])
+            const xlabels = object_to_array(masterData['Timestamp'])
+            console.log(xlabels)
+            var ch1 = new Chart("tempChart1", {
+                type: "line",
+                data: {
+                    labels: xlabels,
+                    datasets: [{
+                        fill: false,
+                        lineTension: 0,
+                        backgroundColor: "rgba(0,0,0)",
+                        borderColor: "rgba(255,0,0)",
+                        data: tempValues
+                    }]
+                },
+                options: {
+                    legend: { display: false },
+                    scales: {
+                        yAxes: [{ ticks: { min: 20, max: 40 } }],
+                    },
+                    title: {
+                        display: true,
+                        text: "Temperature (Celsius)",
+                        fontSize: 16,
+
+                    }
+                }
+            });
+            var ch2 = new Chart("humChart1", {
+                type: "line",
+                data: {
+                    labels: xlabels,
+                    datasets: [{
+                        fill: false,
+                        lineTension: 0,
+                        backgroundColor: "rgba(0,0,0)",
+                        borderColor: "rgba(0,255,0)",
+                        data: humValues
+                    }]
+                },
+                options: {
+                    legend: { display: false },
+                    scales: {
+                        yAxes: [{ ticks: { min: 30, max: 100 } }],
+                    },
+                    title: {
+                        display: true,
+                        text: "Humidity (RH)",
+                        fontSize: 16,
+                    }
+                }
+            });
+        }
+        main();
+    </script>
+</body>
+</html>

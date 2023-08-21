@@ -1,0 +1,72 @@
+project reference video -> https://youtu.be/m13o5aqeCbM?list=PLg9QrePLxowAWhYK8fD0yCSxVX-NbxywW
+
+Data Cleaning and Formatting:
+1. 	orders sheet needs populating of the empty customer name, email and country columns. 
+	for that we will use the xlookup for each column from relevent sheets.
+
+	the formula: 	=XLOOKUP(lookup_value, lookup_array, return_array, [if_not_found], [match_mode], [search_mode]) 
+			customer name -> =XLOOKUP(C2,customers!$A$1:$A$1001,customers!$B$1:$B$1001,,0) -> here if not found -> blank
+			email -> if you use the same method you'll end up with 0 for blanks. instead use this, =IF(XLOOKUP(C2,customers!$A$1:$A$1001,customers!$C$1:$C$1001,,0)=0,"",XLOOKUP(C2,customers!$A$1:$A$1001,customers!$C$1:$C$1001,,0))			
+			country -> =XLOOKUP(C2,customers!$A$1:$A$1001,customers!$G$1:$G$1001,,0)
+
+	shortcuts: 	xlookup + tab
+			ctrl + shift + pagedown to select the whole column uptil blank cell found (maybe end of the entries)
+			F4 for absolute referencing -> value is fixed to what is in cell
+			click on the fill handle dot to completly fill the column
+
+	references : 	https://youtu.be/iDg9s7BJ2m4 -> absolute, relative and inter-sheet cell referencing
+						
+2. 	orders sheet need populating of the empty coffee type, roast type, size, unit price and sales columns.
+	for that we will use index-match. this is a dynamic formula.
+
+	the formula: 	=INDEX(array, row_num, [column_num]) 
+			=MATCH(lookup_value, lookup_array, [match_type])
+			coffee type -> =INDEX(products!$A$1:$G$49,MATCH(orders!$D2,products!$A$1:$A$49,0),MATCH(orders!I$1,products!$A$1:$G$1,0)) -> then drag the fill handle to the rest of the columns (not rows), then double click the fill handle to populate the rows of those columns.
+			explaination -> the index takes the table values and specific rows and column. 
+					these rows and columns are taken up if the first and second match together returns values.
+					the first match checks along the D column ($D_ -> fixed column D and doesn't shift to next column when formula is dragged/copied to other cells) 
+					and second match checks along each column for that row 1 (_$1 -> fixed row 1 and doesn't shift to other rows when dragged/copied).		
+
+	shortcuts: 	F4 * 2, F4 * 3 for absolute referencing row, column alone.
+			F2 for viewinf fromula and cells referenced.
+
+3. 	sales is populated with =unit price * quantity
+
+4.	add another column coffee type name to fullform the coffee type abbreviations, similarly for roast type
+
+	the formula: 	=IF(I2="Rob","Robusta",IF(I2="Ara","Arabica",IF(I2="Lib","Liberica",IF(I2="Exc","Excelsa",""))))
+			=IF(J2="M","Medium",IF(J2="L","Light",IF(J2="D","Dark","")))
+
+5. 	now format the dates into a standard one say day - month name - year, the size column to include 'kg', the unit price and sales columns to have $ sign
+	
+	the formula: 	select column, go to the format cells panel, select custom and type dd-mmm-yyyy. similarly for size its 0.0 "kg"
+			for the unit price and sales columns select those two columns, go to currency drop down in numbers panel and select $
+
+	shortcuts: 	ctrl + 1 to go to format cells panel
+
+6. 	now remove duplicates by selecting whole sheet containing range, go to data tab, data tools panel, remove duplicates.
+
+
+Create table:
+1.	select anywhere, ctrl + T, set table has headers and make sure the range is selected and enter. give table a name in table design, properties panel.
+	
+	reason as to why we converted the range to a table is so that pivot tables created and get updated much easier.
+
+Pivot table:
+1. 	create a pivot table for the orders table
+	
+	method: go to insert tab -> tables panel -> pivot table -> create on new sheet and enter.
+		also enter a name in pivottable analyze tab.
+
+from here follow vid from here https://youtu.be/m13o5aqeCbM?list=PLg9QrePLxowAWhYK8fD0yCSxVX-NbxywW&t=1642
+	
+
+
+
+
+
+
+
+
+
+
